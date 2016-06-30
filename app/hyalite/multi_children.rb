@@ -1,7 +1,7 @@
 module Hyalite
   module MultiChildren
     def mount_children(nested_children, mount_ready, context)
-      children = instantiate_children(nested_children, mount_ready, context)
+      children = instantiate_children(nested_children, context)
       @rendered_children = children
       index = 0
       children.keys.map do |name|
@@ -85,10 +85,10 @@ module Hyalite
     end
 
     def instantiate_children(nested_child_nodes, context)
-      Reconciler.flatten_children(nested_child_nodes).map {|name, child|
+      Reconciler.flatten_children(nested_child_nodes).each_with_object({}) {|(name, child), hash|
         child_instance = Hyalite.instantiate_component(child, nil)
-        [name, child_instance]
-      }.to_h
+        hash[name] = child_instance
+      }
     end
 
     private

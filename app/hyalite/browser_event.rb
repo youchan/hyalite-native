@@ -1,5 +1,4 @@
 require 'set'
-require 'math'
 require 'hyalite/event_dispatcher'
 require 'hyalite/synthetic_event'
 require 'hyalite/event_plugin/event_plugin_registry'
@@ -67,8 +66,8 @@ module Hyalite
 
       def event_plugin_registry
         @event_plugin_registry ||= EventPluginRegistry.new(
-          SimpleEventPlugin.new,
-          ChangeEventPlugin.new
+          SimpleEventPlugin.new
+          #ChangeEventPlugin.new
         )
       end
 

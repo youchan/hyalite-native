@@ -10,7 +10,7 @@ require 'hyalite/composite_component'
 
 module Hyalite
   module Mount
-    ID_ATTR_NAME = 'data-hyalite-id'
+    ID_ATTR_NAME = 'hyalite_id'
     CHECKSUM_ATTR_NAME = 'data-react-checksum'
 
     @instances_by_root_id = {}
@@ -61,14 +61,12 @@ module Hyalite
       end
 
       def is_rendered(node)
-        return false if node.node_type != Browser::DOM::Node::ELEMENT_NODE
-
         id = node_id(node)
         id ? id[0] == SEPARATOR : false
       end
 
       def render_new_root_component(next_element, container, should_reuse_markup, context)
-        component_instance = Hyalite.instantiate_component(next_element, nil)
+        component_instance = Hyalite.instantiate_component(next_element)
         root_id = register_component(component_instance, container)
 
         Hyalite.updates.batched_updates do
@@ -121,15 +119,11 @@ module Hyalite
           root_element.attr(CHECKSUM_ATTR_NAME, checksum)
         end
 
-        container.inner_dom = markup
+        container.addSubview(markup)
       end
 
       def root_element_in_container(container)
-        if container.node_type == Browser::DOM::Node::DOCUMENT_NODE
-          $document
-        else
-          container.child
-        end
+        container.subviews.first
       end
 
       def root_id(container)
@@ -163,9 +157,7 @@ module Hyalite
       end
 
       def internal_id(node)
-        if node.node_type == Browser::DOM::Node::ELEMENT_NODE
-          node.attr(ID_ATTR_NAME)
-        end
+        node[hyalite_id]
       end
 
       # cf. ReactMount#findReactContainerForID

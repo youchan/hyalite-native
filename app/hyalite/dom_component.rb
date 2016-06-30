@@ -157,9 +157,9 @@ module Hyalite
           if last_props.has_key? prop_key
             BrowserEvent.delete_listener(root_node_id, prop_key)
           end
-        elsif DOMProperty.include?(prop_key) || DOMProperty.is_custom_attribute(prop_key)
+        elsif UIProperty.include?(prop_key)
           node = Mount.node(root_node_id)
-          DOMPropertyOperations.delete_value_for_property(node, prop_key, prop_value)
+          UIPropertyOperations.delete_value_for_property(node, prop_key, prop_value)
         end
       end
 
@@ -195,15 +195,12 @@ module Hyalite
           elsif last_prop
             BrowserEvent.delete_listener(root_node_id, prop_key)
           end
-        elsif is_custom_component(@tag, next_props)
-          node = Mount.node(root_node_id)
-          DOMPropertyOperations.set_value_for_attribute(node, prop_key, next_prop);
-        elsif DOMProperty.include?(prop_key) || DOMProperty.is_custom_attribute(prop_key)
+        elsif UIProperty.include?(prop_key)
           node = Mount.node(root_node_id)
           if next_prop
-            DOMPropertyOperations.set_value_for_property(node, prop_key, next_prop);
+            UIPropertyOperations.set_value_for_property(node, prop_key, next_prop);
           else
-            DOMPropertyOperations.delete_value_for_property(node, prop_key)
+            UIPropertyOperations.delete_value_for_property(node, prop_key)
           end
         end
       end
@@ -249,7 +246,7 @@ module Hyalite
     end
 
     def create_open_tag_markup_and_put_listeners(mount_ready, props)
-      element = $document.create_element(@tag)
+      element = UIHelper.create_ui(@tag)
 
       props.each do |prop_key, prop_value|
         next unless prop_value
@@ -261,13 +258,9 @@ module Hyalite
             if prop_value
               prop_value = @previous_style_copy = props[:style].clone
             end
-            DOMPropertyOperations.create_markup_for_styles(element, prop_value)
+            UIPropertyOperations.create_markup_for_styles(element, prop_value)
           else
-            if is_custom_component(@tag, props)
-              DOMPropertyOperations.create_markup_for_custom_attribute(element, prop_key, prop_value)
-            else
-              DOMPropertyOperations.create_markup_for_property(element, prop_key, prop_value)
-            end
+            UIPropertyOperations.create_markup_for_property(element, prop_key, prop_value)
           end
         end
       end
@@ -311,10 +304,6 @@ module Hyalite
       mount_ready.enqueue do
         BrowserEvent.put_listener(id, event_name, listener)
       end
-    end
-
-    def is_custom_component(tag, props)
-      tag.include?('-') || props.has_key?(:is)
     end
 
     def is_text_content(children)
