@@ -1,3 +1,5 @@
+MotionBlender.except
+
 require 'json'
 require 'hyalite/linked_value_utils'
 require 'hyalite/dom_operations'

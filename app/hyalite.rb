@@ -1,5 +1,6 @@
-require 'opal'
-require 'browser'
+require 'motion_blender'
+MotionBlender.incept
+
 require 'hyalite/transaction'
 require 'hyalite/adler32'
 require 'hyalite/mount'

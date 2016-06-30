@@ -1,3 +1,10 @@
+MotionBlender.except
+
+module Browser
+  module DOM
+  end
+end
+
 class Browser::DOM::Element
   def input_type
     `self.native.type`
